@@ -1,0 +1,52 @@
+<div class="container mt-4">
+  <div class="bg-white p-4 shadow rounded">
+    <h2 class="mb-4 text-center">Lista de Tareas</h2>
+
+    <form class="row g-3 mb-3" (ngSubmit)="agregarTarea()" #formTarea="ngForm">
+      <div class="col-auto">
+        <input
+          type="text"
+          name="titulo"
+          [(ngModel)]="nuevoTitulo"
+          placeholder="Nueva tarea"
+          required
+          class="form-control"
+        />
+      </div>
+      <div class="col-auto">
+        <button type="submit" [disabled]="formTarea.invalid" class="btn btn-primary">
+          <i class="bi bi-plus-circle"></i> Agregar
+        </button>
+      </div>
+    </form>
+
+    <div *ngIf="cargando" class="alert alert-info">Cargando tareas...</div>
+    <ul class="list-group" *ngIf="!cargando">
+      <li *ngFor="let tarea of tareas" class="list-group-item d-flex justify-content-between align-items-center">
+        <span>
+          {{ tarea.titulo }}
+          <span *ngIf="tarea.completada" class="badge bg-success ms-2">
+            <i class="bi bi-check-circle"></i> Completada
+          </span>
+        </span>
+        <span>
+          <button
+            *ngIf="!tarea.completada"
+            (click)="marcarComoCompletada(tarea)"
+            type="button"
+            class="btn btn-success btn-sm me-2"
+          >
+            <i class="bi bi-check-circle"></i> Completar
+          </button>
+          <button
+            (click)="eliminarTarea(tarea)"
+            type="button"
+            class="btn btn-danger btn-sm"
+          >
+            <i class="bi bi-trash"></i> Eliminar
+          </button>
+        </span>
+      </li>
+    </ul>
+  </div>
+</div>
