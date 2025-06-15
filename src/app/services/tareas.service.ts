@@ -1,35 +1,39 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { Tarea } from '../models/tarea.model';
+import { Injectable } from '@angular/core'; // Permite que este servicio sea inyectable en otros componentes/servicios
+import { HttpClient } from '@angular/common/http'; // Servicio de Angular para hacer peticiones HTTP
+import { Observable } from 'rxjs'; // Permite trabajar con datos asíncronos (como respuestas HTTP)
+import { Tarea } from '../models/tarea.model'; // Importa la interfaz que define la estructura de una tarea
 
 @Injectable({
-  providedIn: 'root' // Hace que este servicio esté disponible en toda la app
+  providedIn: 'root' // Hace que este servicio esté disponible en toda la aplicación (singleton)
 })
 export class TareasService {
-  // URL base de la API de tareas
+  // URL base de la API de tareas (ajusta el puerto si tu backend cambia)
   private apiUrl = 'http://localhost:5190/api/tareas';
 
-  // Inyecta HttpClient para hacer peticiones HTTP
+  // Inyecta HttpClient para poder hacer peticiones HTTP a la API
   constructor(private http: HttpClient) {}
 
-  // Obtiene todas las tareas (GET)
+  // Método para obtener todas las tareas (GET)
   getTareas(): Observable<Tarea[]> {
-    // Devuelve un Observable con la lista de tareas desde la API
+    // Devuelve un Observable con la lista de tareas obtenida desde la API
     return this.http.get<Tarea[]>(this.apiUrl);
   }
 
-  // Crea una nueva tarea (POST)
+  // Método para crear una nueva tarea (POST)
   crearTarea(tarea: Omit<Tarea, 'id'>): Observable<Tarea> {
-    // Envía la nueva tarea a la API (sin id, porque lo genera el backend)
+    // Envía la nueva tarea a la API (sin id, porque el backend lo genera automáticamente)
     return this.http.post<Tarea>(this.apiUrl, tarea);
   }
+
+  // Método para actualizar una tarea existente (PUT)
   actualizarTarea(tarea: Tarea): Observable<Tarea> {
-  // Hace una petición PUT para actualizar la tarea en la API
-  return this.http.put<Tarea>(`${this.apiUrl}/${tarea.id}`, tarea);
+    // Envía la tarea actualizada a la API usando el id para identificarla
+    return this.http.put<Tarea>(`${this.apiUrl}/${tarea.id}`, tarea);
   }
+
+  // Método para eliminar una tarea (DELETE)
   eliminarTarea(id: number): Observable<void> {
-  // Hace una petición DELETE para eliminar la tarea en la API
-  return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    // Hace una petición DELETE a la API para eliminar la tarea con el id indicado
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

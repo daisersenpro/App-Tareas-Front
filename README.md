@@ -21,6 +21,28 @@ Para usar los estilos de [Bootstrap](https://getbootstrap.com/) globalmente en e
 
 3. Si el servidor de desarrollo estaba corriendo, reinícialo para que tome los cambios.
 
+## Problema y solución con assets en Angular
+
+**¿Qué hicimos?**
+
+- Corregimos la configuración de `assets` en `angular.json`:
+  - Antes, el proyecto buscaba archivos estáticos en una carpeta llamada `public`, que no existía ni usabas.
+  - Cambiamos la configuración para que Angular copie todo lo que está en `src/assets` (y el favicon) al directorio de salida (`dist`) cuando compila o sirve la app.
+
+- Reiniciamos el servidor de Angular:
+  - Cuando cambias la configuración de `angular.json`, Angular necesita que reinicies el servidor (`ng serve`) para aplicar los cambios.
+  - Al reiniciar, Angular ahora sí copió correctamente la carpeta `src/assets` (y tu imagen) al build, y la imagen estuvo disponible en la ruta `assets/SenProLogo.png`.
+
+**¿Por qué no funcionaba antes?**
+
+- Angular no encontraba la imagen porque nunca la copiaba al build, ya que la configuración de `assets` apuntaba a una carpeta equivocada (`public`).
+- Aunque la imagen estaba en `src/assets`, Angular solo copia lo que le indicas en `angular.json`.
+- El reinicio del servidor fue necesario para que Angular leyera la nueva configuración.
+
+**Resumen**
+- Configuración correcta en `angular.json` → Angular sabe de dónde copiar los archivos estáticos.
+- Reiniciar el servidor → Angular aplica la nueva configuración y copia los archivos correctamente.
+
 ## Ediciones comunes en `angular.json`
 
 - **Agregar estilos globales:** Usa el arreglo `styles` como se muestra arriba.
@@ -82,4 +104,4 @@ Angular CLI no incluye un framework de pruebas e2e por defecto. Puedes elegir el
 
 ## Recursos adicionales
 
-Para más información sobre Angular CLI y referencias detalladas de comandos, visita la [documentación oficial de Angular CLI](https://angular.dev/tools/cli).
+Para más información sobre Angular CLI y referencias detalladas de comandos, visita
