@@ -14,7 +14,12 @@ import { Tarea } from '../../models/tarea.model'; // Importa el modelo de datos 
 export class ListaTareasComponent implements OnInit {
   tareas: Tarea[] = []; // Array donde se guardan las tareas obtenidas del backend
   cargando = true; // Variable para mostrar mensaje de carga mientras se obtienen las tareas
-  nuevoTitulo = ''; // Variable para el input del formulario (nuevo título de tarea)
+
+  // Variables para el formulario de nueva tarea
+  nuevoTitulo = ''; // Título de la nueva tarea
+  nuevaDescripcion = ''; // Descripción de la nueva tarea
+  nuevaPrioridad = 2; // Prioridad por defecto (2 = Media)
+  nuevaFechaVencimiento: string | null = null; // Fecha de vencimiento (puede ser null)
 
   // Inyecta el servicio de tareas en el constructor
   constructor(private tareasService: TareasService) {}
@@ -36,14 +41,22 @@ export class ListaTareasComponent implements OnInit {
 
   // Método para agregar una nueva tarea
   agregarTarea() {
-    if (!this.nuevoTitulo.trim()) return; // No agrega si el título está vacío
+    // Valida que título y descripción no estén vacíos
+    if (!this.nuevoTitulo.trim() || !this.nuevaDescripcion.trim()) return;
     this.tareasService.crearTarea({
       titulo: this.nuevoTitulo,
-      completada: false
+      descripcion: this.nuevaDescripcion,
+      prioridad: this.nuevaPrioridad,
+      completada: false,
+      fechaVencimiento: this.nuevaFechaVencimiento
     }).subscribe({
       next: (tarea) => {
         this.tareas.push(tarea); // Agrega la nueva tarea al array local
-        this.nuevoTitulo = '';   // Limpia el input del formulario
+        // Limpia los campos del formulario
+        this.nuevoTitulo = '';
+        this.nuevaDescripcion = '';
+        this.nuevaPrioridad = 2;
+        this.nuevaFechaVencimiento = null;
       },
       error: (err) => {
         console.error('Error al agregar tarea', err);

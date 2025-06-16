@@ -20,8 +20,11 @@ export class TareasService {
   }
 
   // Método para crear una nueva tarea (POST)
-  crearTarea(tarea: Omit<Tarea, 'id'>): Observable<Tarea> {
-    // Envía la nueva tarea a la API (sin id, porque el backend lo genera automáticamente)
+  // Omitimos 'id', 'fechaCreacion' y 'fechaModificacion' porque los genera el backend
+  crearTarea(
+    tarea: Omit<Tarea, 'id' | 'fechaCreacion' | 'fechaModificacion'>
+  ): Observable<Tarea> {
+    // Envía la nueva tarea a la API (el backend asigna id y fechas automáticamente)
     return this.http.post<Tarea>(this.apiUrl, tarea);
   }
 

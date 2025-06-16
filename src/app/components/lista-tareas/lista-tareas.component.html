@@ -3,34 +3,72 @@
     <h2 class="mb-4 text-center">Lista de Tareas</h2>
 
     <!-- 
-      Formulario para agregar una nueva tarea.
+      Formulario para agregar una nueva tarea con más campos.
       (ngSubmit)="agregarTarea()" indica que al enviar el formulario se ejecuta la función agregarTarea() del componente TypeScript.
       #formTarea="ngForm" crea una referencia local al formulario para poder validar si es válido o no.
     -->
     <form class="row g-3 mb-3" (ngSubmit)="agregarTarea()" #formTarea="ngForm">
-      <div class="col-auto">
+      <div class="col-12 col-md-3">
         <!-- 
-          Input de texto para escribir el título de la nueva tarea.
-          [(ngModel)]="nuevoTitulo" es un ENLACE BIDIRECCIONAL: 
-          - Si el usuario escribe en el input, la variable nuevoTitulo en el componente se actualiza automáticamente.
-          - Si la variable nuevoTitulo cambia en el componente, el input también se actualiza.
+          Input de texto para el título de la tarea.
+          [(ngModel)]="nuevoTitulo" es un ENLACE BIDIRECCIONAL.
         -->
         <input
           type="text"
           name="titulo"
           [(ngModel)]="nuevoTitulo"
-          placeholder="Nueva tarea"
+          placeholder="Título de la tarea"
           required
           class="form-control"
         />
       </div>
-      <div class="col-auto">
+      <div class="col-12 col-md-3">
+        <!-- 
+          Input de texto para la descripción de la tarea.
+          [(ngModel)]="nuevaDescripcion" es un ENLACE BIDIRECCIONAL.
+        -->
+        <input
+          type="text"
+          name="descripcion"
+          [(ngModel)]="nuevaDescripcion"
+          placeholder="Descripción"
+          required
+          class="form-control"
+        />
+      </div>
+      <div class="col-6 col-md-2">
+        <!-- 
+          Selector para la prioridad de la tarea.
+          1 = Alta, 2 = Media, 3 = Baja
+        -->
+        <select
+          name="prioridad"
+          [(ngModel)]="nuevaPrioridad"
+          required
+          class="form-select"
+        >
+          <option [ngValue]="1">Alta</option>
+          <option [ngValue]="2">Media</option>
+          <option [ngValue]="3">Baja</option>
+        </select>
+      </div>
+      <div class="col-6 col-md-2">
+        <!-- 
+          Input para la fecha de vencimiento de la tarea.
+        -->
+        <input
+          type="date"
+          name="fechaVencimiento"
+          [(ngModel)]="nuevaFechaVencimiento"
+          class="form-control"
+        />
+      </div>
+      <div class="col-12 col-md-2">
         <!-- 
           Botón para agregar la tarea.
-          [disabled]="formTarea.invalid" desactiva el botón si el formulario no es válido (por ejemplo, si el input está vacío).
+          [disabled]="formTarea.invalid" desactiva el botón si el formulario no es válido.
         -->
-        <button type="submit" [disabled]="formTarea.invalid" class="btn btn-primary">
-          <!-- Icono de Bootstrap Icons para mejorar el aspecto visual -->
+        <button type="submit" [disabled]="formTarea.invalid" class="btn btn-primary w-100">
           <i class="bi bi-plus-circle"></i> Agregar
         </button>
       </div>
@@ -54,13 +92,30 @@
       <li *ngFor="let tarea of tareas" class="list-group-item d-flex justify-content-between align-items-center">
         <span>
           <!-- 
-            {{ tarea.titulo }} muestra el título de la tarea.
-            Es una expresión de Angular que inserta el valor de la propiedad titulo de cada tarea.
+            Muestra el título de la tarea.
           -->
-          {{ tarea.titulo }}
+          <strong>{{ tarea.titulo }}</strong>
+          <!-- 
+            Muestra la descripción de la tarea.
+          -->
+          <div class="text-muted small">{{ tarea.descripcion }}</div>
+          <!-- 
+            Muestra la prioridad de la tarea.
+          -->
+          <span class="badge bg-secondary me-1">
+            Prioridad: 
+            <span *ngIf="tarea.prioridad === 1">Alta</span>
+            <span *ngIf="tarea.prioridad === 2">Media</span>
+            <span *ngIf="tarea.prioridad === 3">Baja</span>
+          </span>
+          <!-- 
+            Muestra la fecha de vencimiento si existe.
+          -->
+          <span *ngIf="tarea.fechaVencimiento" class="badge bg-info text-dark me-1">
+            Vence: {{ tarea.fechaVencimiento | date:'shortDate' }}
+          </span>
           <!-- 
             Si la tarea está completada, muestra una insignia verde con el texto "Completada" y un icono.
-            *ngIf="tarea.completada" significa que este span solo aparece si la tarea está marcada como completada.
           -->
           <span *ngIf="tarea.completada" class="badge bg-success ms-2">
             <i class="bi bi-check-circle"></i> Completada
@@ -69,8 +124,7 @@
         <span>
           <!-- 
             Botón para marcar la tarea como completada.
-            Solo aparece si la tarea NO está completada (*ngIf="!tarea.completada").
-            Al hacer clic, ejecuta la función marcarComoCompletada(tarea) del componente.
+            Solo aparece si la tarea NO está completada.
           -->
           <button
             *ngIf="!tarea.completada"
@@ -82,7 +136,6 @@
           </button>
           <!-- 
             Botón para eliminar la tarea.
-            Al hacer clic, ejecuta la función eliminarTarea(tarea) del componente.
           -->
           <button
             (click)="eliminarTarea(tarea)"
