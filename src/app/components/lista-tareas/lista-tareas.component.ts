@@ -15,6 +15,9 @@ export class ListaTareasComponent implements OnInit {
   tareas: Tarea[] = []; // Array donde se guardan las tareas obtenidas del backend
   cargando = true; // Variable para mostrar mensaje de carga mientras se obtienen las tareas
 
+  // Variable para guardar la tarea que se está editando
+  tareaEditando: Tarea = this.nuevaTareaVacia();
+
   // Variables para el formulario de nueva tarea
   nuevoTitulo = ''; // Título de la nueva tarea
   nuevaDescripcion = ''; // Descripción de la nueva tarea
@@ -86,6 +89,55 @@ export class ListaTareasComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error al eliminar tarea', err);
+      }
+    });
+  }
+
+  // Función para inicializar una tarea vacía (útil para limpiar el formulario)
+  nuevaTareaVacia(): Tarea {
+    return {
+      id: 0,
+      titulo: '',
+      descripcion: '',
+      prioridad: 2,
+      completada: false,
+      fechaCreacion: '',
+      fechaVencimiento: null,
+      fechaModificacion: null
+    };
+  }
+
+  // Función para abrir el modal y cargar la tarea seleccionada
+  abrirModalEdicion(tarea: Tarea) {
+    // Clona la tarea seleccionada para no modificarla directamente en la lista
+    this.tareaEditando = { ...tarea };
+
+    // Abre el modal usando Bootstrap JS
+    const modal = new (window as any).bootstrap.Modal(
+      document.getElementById('modalEdicionTarea')
+    );
+    modal.show();
+  }
+
+  // Función para guardar los cambios de la tarea editada
+  guardarEdicionTarea() {
+    // Al editar, la tarea siempre pasa a no completada
+    this.tareaEditando.completada = false;
+    this.tareasService.actualizarTarea(this.tareaEditando).subscribe({
+      next: (tareaActualizada) => {
+        // Actualiza la tarea en la lista local
+        const idx = this.tareas.findIndex(t => t.id === tareaActualizada.id);
+        if (idx !== -1) {
+          this.tareas[idx] = tareaActualizada;
+        }
+        // Cierra el modal
+        const modal = (window as any).bootstrap.Modal.getInstance(
+          document.getElementById('modalEdicionTarea')
+        );
+        modal.hide();
+      },
+      error: (err) => {
+        console.error('Error al editar tarea', err);
       }
     });
   }

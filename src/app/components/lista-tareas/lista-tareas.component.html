@@ -9,10 +9,7 @@
     -->
     <form class="row g-3 mb-3" (ngSubmit)="agregarTarea()" #formTarea="ngForm">
       <div class="col-12 col-md-3">
-        <!-- 
-          Input de texto para el título de la tarea.
-          [(ngModel)]="nuevoTitulo" es un ENLACE BIDIRECCIONAL.
-        -->
+        <!-- Input de texto para el título de la tarea -->
         <input
           type="text"
           name="titulo"
@@ -23,10 +20,7 @@
         />
       </div>
       <div class="col-12 col-md-3">
-        <!-- 
-          Input de texto para la descripción de la tarea.
-          [(ngModel)]="nuevaDescripcion" es un ENLACE BIDIRECCIONAL.
-        -->
+        <!-- Input de texto para la descripción de la tarea -->
         <input
           type="text"
           name="descripcion"
@@ -37,10 +31,7 @@
         />
       </div>
       <div class="col-6 col-md-2">
-        <!-- 
-          Selector para la prioridad de la tarea.
-          1 = Alta, 2 = Media, 3 = Baja
-        -->
+        <!-- Selector para la prioridad de la tarea -->
         <select
           name="prioridad"
           [(ngModel)]="nuevaPrioridad"
@@ -53,9 +44,7 @@
         </select>
       </div>
       <div class="col-6 col-md-2">
-        <!-- 
-          Input para la fecha de vencimiento de la tarea.
-        -->
+        <!-- Input para la fecha de vencimiento de la tarea -->
         <input
           type="date"
           name="fechaVencimiento"
@@ -64,88 +53,107 @@
         />
       </div>
       <div class="col-12 col-md-2">
-        <!-- 
-          Botón para agregar la tarea.
-          [disabled]="formTarea.invalid" desactiva el botón si el formulario no es válido.
-        -->
+        <!-- Botón para agregar la tarea -->
         <button type="submit" [disabled]="formTarea.invalid" class="btn btn-primary w-100">
           <i class="bi bi-plus-circle"></i> Agregar
         </button>
       </div>
     </form>
 
-    <!-- 
-      Mensaje que se muestra solo mientras se están cargando las tareas desde el backend.
-      *ngIf="cargando" significa que este div solo aparece si la variable cargando es true.
-    -->
+    <!-- Mensaje de carga -->
     <div *ngIf="cargando" class="alert alert-info">Cargando tareas...</div>
 
-    <!-- 
-      Lista de tareas.
-      *ngIf="!cargando" significa que la lista solo se muestra cuando ya terminaron de cargarse las tareas.
-    -->
+    <!-- Lista de tareas -->
     <ul class="list-group" *ngIf="!cargando">
-      <!-- 
-        *ngFor="let tarea of tareas" recorre el array tareas y crea un <li> por cada tarea.
-        Así se muestra cada tarea que existe en la base de datos.
-      -->
       <li *ngFor="let tarea of tareas" class="list-group-item d-flex justify-content-between align-items-center">
         <span>
-          <!-- 
-            Muestra el título de la tarea.
-          -->
           <strong>{{ tarea.titulo }}</strong>
-          <!-- 
-            Muestra la descripción de la tarea.
-          -->
           <div class="text-muted small">{{ tarea.descripcion }}</div>
-          <!-- 
-            Muestra la prioridad de la tarea.
-          -->
           <span class="badge bg-secondary me-1">
             Prioridad: 
             <span *ngIf="tarea.prioridad === 1">Alta</span>
             <span *ngIf="tarea.prioridad === 2">Media</span>
             <span *ngIf="tarea.prioridad === 3">Baja</span>
           </span>
-          <!-- 
-            Muestra la fecha de vencimiento si existe.
-          -->
           <span *ngIf="tarea.fechaVencimiento" class="badge bg-info text-dark me-1">
             Vence: {{ tarea.fechaVencimiento | date:'shortDate' }}
           </span>
-          <!-- 
-            Si la tarea está completada, muestra una insignia verde con el texto "Completada" y un icono.
-          -->
           <span *ngIf="tarea.completada" class="badge bg-success ms-2">
             <i class="bi bi-check-circle"></i> Completada
           </span>
         </span>
-        <span>
-          <!-- 
-            Botón para marcar la tarea como completada.
-            Solo aparece si la tarea NO está completada.
-          -->
-          <button
-            *ngIf="!tarea.completada"
-            (click)="marcarComoCompletada(tarea)"
-            type="button"
-            class="btn btn-success btn-sm me-2"
-          >
-            <i class="bi bi-check-circle"></i> Completar
-          </button>
-          <!-- 
-            Botón para eliminar la tarea.
-          -->
-          <button
-            (click)="eliminarTarea(tarea)"
-            type="button"
-            class="btn btn-danger btn-sm"
-          >
-            <i class="bi bi-trash"></i> Eliminar
-          </button>
-        </span>
+       <span>
+  <!-- Botón para editar la tarea -->
+  <button
+    type="button"
+    class="btn btn-warning btn-sm me-2"
+    (click)="abrirModalEdicion(tarea)"
+  >
+    <i class="bi bi-pencil"></i> Editar
+  </button>
+  <!-- Botón para marcar como completada (solo si NO está completada) -->
+  <button
+    *ngIf="!tarea.completada"
+    (click)="marcarComoCompletada(tarea)"
+    type="button"
+    class="btn btn-success btn-sm me-2"
+  >
+    <i class="bi bi-check-circle"></i> Completar
+  </button>
+  <!-- Botón para eliminar la tarea -->
+  <button
+    (click)="eliminarTarea(tarea)"
+    type="button"
+    class="btn btn-danger btn-sm"
+  >
+    <i class="bi bi-trash"></i> Eliminar
+  </button>
+</span>
       </li>
     </ul>
+  </div>
+</div>
+
+<!-- Modal para editar tarea -->
+<div class="modal fade" id="modalEdicionTarea" tabindex="-1" aria-labelledby="modalEdicionTareaLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form (ngSubmit)="guardarEdicionTarea()" #formEditar="ngForm">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalEdicionTareaLabel">Editar Tarea</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Título -->
+          <div class="mb-3">
+            <label class="form-label">Título</label>
+            <input type="text" class="form-control" name="titulo" [(ngModel)]="tareaEditando.titulo" required>
+          </div>
+          <!-- Descripción -->
+          <div class="mb-3">
+            <label class="form-label">Descripción</label>
+            <input type="text" class="form-control" name="descripcion" [(ngModel)]="tareaEditando.descripcion" required>
+          </div>
+          <!-- Prioridad -->
+          <div class="mb-3">
+            <label class="form-label">Prioridad</label>
+            <select class="form-select" name="prioridad" [(ngModel)]="tareaEditando.prioridad" required>
+              <option [ngValue]="1">Alta</option>
+              <option [ngValue]="2">Media</option>
+              <option [ngValue]="3">Baja</option>
+            </select>
+          </div>
+          <!-- Fecha de vencimiento -->
+          <div class="mb-3">
+            <label class="form-label">Fecha de vencimiento</label>
+            <input type="date" class="form-control" name="fechaVencimiento" [(ngModel)]="tareaEditando.fechaVencimiento">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary" [disabled]="formEditar.invalid">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
