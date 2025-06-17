@@ -1,0 +1,22 @@
+<!-- Formulario de Login -->
+<div class="container mt-5" style="max-width: 400px;">
+  <h3 class="mb-4 text-center">Iniciar Sesión</h3>
+  <form (ngSubmit)="login()" #formLogin="ngForm">
+    <!-- Email -->
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      <input type="email" name="email" [(ngModel)]="email" required class="form-control" />
+    </div>
+    <!-- Contraseña -->
+    <div class="mb-3">
+      <label class="form-label">Contraseña</label>
+      <input type="password" name="password" [(ngModel)]="password" required class="form-control" />
+    </div>
+    <!-- Mensaje de error -->
+    <div *ngIf="mensajeError" class="alert alert-danger">
+      {{ mensajeError }}
+    </div>
+    <!-- Botón -->
+    <button type="submit" class="btn btn-primary w-100" [disabled]="formLogin.invalid">Ingresar</button>
+  </form>
+</div>

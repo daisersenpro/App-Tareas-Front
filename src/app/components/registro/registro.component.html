@@ -1,0 +1,39 @@
+<!-- Formulario de Registro -->
+<div class="container mt-5" style="max-width: 400px;">
+  <h3 class="mb-4 text-center">Registro de Usuario</h3>
+  <form (ngSubmit)="registrar()" #formRegistro="ngForm">
+    <!-- Nombre -->
+    <div class="mb-3">
+      <label class="form-label">Nombre</label>
+      <input type="text" name="nombre" [(ngModel)]="nombre" required class="form-control" />
+    </div>
+    <!-- Email -->
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      <input type="email" name="email" [(ngModel)]="email" required class="form-control" />
+    </div>
+    <!-- Contraseña -->
+    <div class="mb-3">
+      <label class="form-label">Contraseña</label>
+      <input type="password" name="password" [(ngModel)]="password" required class="form-control" />
+    </div>
+    <!-- Rol -->
+    <div class="mb-3">
+      <label class="form-label">Rol</label>
+      <select name="rol" [(ngModel)]="rol" required class="form-select">
+        <option value="usuario">Usuario</option>
+        <option value="admin">Administrador</option>
+      </select>
+    </div>
+    <!-- Mensaje de error -->
+    <div *ngIf="mensajeError" class="alert alert-danger">
+      {{ mensajeError }}
+    </div>
+    <!-- Mensaje de éxito -->
+    <div *ngIf="mensajeExito" class="alert alert-success">
+      {{ mensajeExito }}
+    </div>
+    <!-- Botón -->
+    <button type="submit" class="btn btn-primary w-100" [disabled]="formRegistro.invalid">Registrarse</button>
+  </form>
+</div>

@@ -2,6 +2,14 @@
   <div class="bg-white p-4 shadow rounded">
     <h2 class="mb-4 text-center">Lista de Tareas</h2>
 
+      <!-- ALERTA Bootstrap para mostrar mensajes de éxito o error -->
+    <div *ngIf="mensaje"
+         class="alert"
+         [ngClass]="{'alert-success': tipoMensaje === 'success', 'alert-danger': tipoMensaje === 'danger'}"
+         role="alert">
+      {{ mensaje }}
+    </div>
+
     <!-- 
       Formulario para agregar una nueva tarea con más campos.
       (ngSubmit)="agregarTarea()" indica que al enviar el formulario se ejecuta la función agregarTarea() del componente TypeScript.
@@ -10,34 +18,17 @@
     <form class="row g-3 mb-3" (ngSubmit)="agregarTarea()" #formTarea="ngForm">
       <div class="col-12 col-md-3">
         <!-- Input de texto para el título de la tarea -->
-        <input
-          type="text"
-          name="titulo"
-          [(ngModel)]="nuevoTitulo"
-          placeholder="Título de la tarea"
-          required
-          class="form-control"
-        />
+        <input type="text" name="titulo" [(ngModel)]="nuevoTitulo" placeholder="Título de la tarea" required
+          class="form-control" />
       </div>
       <div class="col-12 col-md-3">
         <!-- Input de texto para la descripción de la tarea -->
-        <input
-          type="text"
-          name="descripcion"
-          [(ngModel)]="nuevaDescripcion"
-          placeholder="Descripción"
-          required
-          class="form-control"
-        />
+        <input type="text" name="descripcion" [(ngModel)]="nuevaDescripcion" placeholder="Descripción" required
+          class="form-control" />
       </div>
       <div class="col-6 col-md-2">
         <!-- Selector para la prioridad de la tarea -->
-        <select
-          name="prioridad"
-          [(ngModel)]="nuevaPrioridad"
-          required
-          class="form-select"
-        >
+        <select name="prioridad" [(ngModel)]="nuevaPrioridad" required class="form-select">
           <option [ngValue]="1">Alta</option>
           <option [ngValue]="2">Media</option>
           <option [ngValue]="3">Baja</option>
@@ -45,12 +36,7 @@
       </div>
       <div class="col-6 col-md-2">
         <!-- Input para la fecha de vencimiento de la tarea -->
-        <input
-          type="date"
-          name="fechaVencimiento"
-          [(ngModel)]="nuevaFechaVencimiento"
-          class="form-control"
-        />
+        <input type="date" name="fechaVencimiento" [(ngModel)]="nuevaFechaVencimiento" class="form-control" />
       </div>
       <div class="col-12 col-md-2">
         <!-- Botón para agregar la tarea -->
@@ -70,7 +56,7 @@
           <strong>{{ tarea.titulo }}</strong>
           <div class="text-muted small">{{ tarea.descripcion }}</div>
           <span class="badge bg-secondary me-1">
-            Prioridad: 
+            Prioridad:
             <span *ngIf="tarea.prioridad === 1">Alta</span>
             <span *ngIf="tarea.prioridad === 2">Media</span>
             <span *ngIf="tarea.prioridad === 3">Baja</span>
@@ -82,45 +68,40 @@
             <i class="bi bi-check-circle"></i> Completada
           </span>
         </span>
-       <span>
-  <!-- Botón para editar la tarea -->
-  <button
-    type="button"
-    class="btn btn-warning btn-sm me-2"
-    (click)="abrirModalEdicion(tarea)"
-  >
-    <i class="bi bi-pencil"></i> Editar
-  </button>
-  <!-- Botón para marcar como completada (solo si NO está completada) -->
-  <button
-    *ngIf="!tarea.completada"
-    (click)="marcarComoCompletada(tarea)"
-    type="button"
-    class="btn btn-success btn-sm me-2"
-  >
-    <i class="bi bi-check-circle"></i> Completar
-  </button>
-  <!-- Botón para eliminar la tarea -->
-  <button
-    (click)="eliminarTarea(tarea)"
-    type="button"
-    class="btn btn-danger btn-sm"
-  >
-    <i class="bi bi-trash"></i> Eliminar
-  </button>
-</span>
+        <span>
+          <!-- Botón para editar la tarea -->
+          <button type="button" class="btn btn-warning btn-sm me-2" (click)="abrirModalEdicion(tarea)">
+            <i class="bi bi-pencil"></i> Editar
+          </button>
+          <!-- Botón para marcar como completada (solo si NO está completada) -->
+          <button *ngIf="!tarea.completada" (click)="marcarComoCompletada(tarea)" type="button"
+            class="btn btn-success btn-sm me-2">
+            <i class="bi bi-check-circle"></i> Completar
+          </button>
+          <!-- Botón para eliminar la tarea -->
+          <button (click)="eliminarTarea(tarea)" type="button" class="btn btn-danger btn-sm">
+            <i class="bi bi-trash"></i> Eliminar
+          </button>
+        </span>
       </li>
     </ul>
   </div>
 </div>
 
-<!-- Modal para editar tarea -->
-<div class="modal fade" id="modalEdicionTarea" tabindex="-1" aria-labelledby="modalEdicionTareaLabel" aria-hidden="true">
+<!-- 
+  Modal para editar tarea.
+  - El modal está SIEMPRE en el DOM, pero oculto por defecto gracias a las clases Bootstrap: "modal fade" y aria-hidden="true".
+  - Solo se muestra cuando llamas a modal.show() desde TypeScript (al hacer clic en "Editar").
+  - Bootstrap maneja la visibilidad y animación del modal automáticamente.
+-->
+<div class="modal fade" id="modalEdicionTarea" tabindex="-1" aria-labelledby="modalEdicionTareaLabel"
+  aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <form (ngSubmit)="guardarEdicionTarea()" #formEditar="ngForm">
         <div class="modal-header">
           <h5 class="modal-title" id="modalEdicionTareaLabel">Editar Tarea</h5>
+          <!-- Botón para cerrar el modal -->
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
         </div>
         <div class="modal-body">
@@ -146,11 +127,14 @@
           <!-- Fecha de vencimiento -->
           <div class="mb-3">
             <label class="form-label">Fecha de vencimiento</label>
-            <input type="date" class="form-control" name="fechaVencimiento" [(ngModel)]="tareaEditando.fechaVencimiento">
+            <input type="date" class="form-control" name="fechaVencimiento"
+              [(ngModel)]="tareaEditando.fechaVencimiento">
           </div>
         </div>
         <div class="modal-footer">
+          <!-- Botón para cancelar (cierra el modal sin guardar) -->
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <!-- Botón para guardar cambios -->
           <button type="submit" class="btn btn-primary" [disabled]="formEditar.invalid">Guardar cambios</button>
         </div>
       </form>

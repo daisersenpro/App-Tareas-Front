@@ -24,6 +24,17 @@ export class ListaTareasComponent implements OnInit {
   nuevaPrioridad = 2; // Prioridad por defecto (2 = Media)
   nuevaFechaVencimiento: string | null = null; // Fecha de vencimiento (puede ser null)
 
+  // Variables y método para mostrar mensajes tipo alerta Bootstrap
+  mensaje: string = ''; // Texto del mensaje a mostrar
+  tipoMensaje: 'success' | 'danger' = 'success'; // Tipo de alerta (éxito o error)
+
+  // Método para mostrar un mensaje y ocultarlo después de 3 segundos
+  mostrarMensaje(texto: string, tipo: 'success' | 'danger' = 'success') {
+    this.mensaje = texto;
+    this.tipoMensaje = tipo;
+    setTimeout(() => this.mensaje = '', 3000); // Oculta el mensaje después de 3 segundos
+  }
+
   // Inyecta el servicio de tareas en el constructor
   constructor(private tareasService: TareasService) {}
 
@@ -38,6 +49,7 @@ export class ListaTareasComponent implements OnInit {
       error: (err) => {
         console.error('Error al cargar tareas', err); // Muestra error en consola si falla la petición
         this.cargando = false;
+        this.mostrarMensaje('Error al cargar tareas', 'danger');
       }
     });
   }
@@ -60,9 +72,11 @@ export class ListaTareasComponent implements OnInit {
         this.nuevaDescripcion = '';
         this.nuevaPrioridad = 2;
         this.nuevaFechaVencimiento = null;
+        this.mostrarMensaje('Tarea agregada con éxito', 'success');
       },
       error: (err) => {
         console.error('Error al agregar tarea', err);
+        this.mostrarMensaje('Error al agregar tarea', 'danger');
       }
     });
   }
@@ -73,9 +87,11 @@ export class ListaTareasComponent implements OnInit {
     this.tareasService.actualizarTarea(tareaActualizada).subscribe({
       next: () => {
         tarea.completada = true; // Actualiza el estado en el array local
+        this.mostrarMensaje('Tarea marcada como completada', 'success');
       },
       error: (err) => {
         console.error('Error al marcar como completada', err);
+        this.mostrarMensaje('Error al marcar como completada', 'danger');
       }
     });
   }
@@ -86,9 +102,11 @@ export class ListaTareasComponent implements OnInit {
       next: () => {
         // Elimina la tarea del array local filtrando por id
         this.tareas = this.tareas.filter(t => t.id !== tarea.id);
+        this.mostrarMensaje('Tarea eliminada con éxito', 'success');
       },
       error: (err) => {
         console.error('Error al eliminar tarea', err);
+        this.mostrarMensaje('Error al eliminar tarea', 'danger');
       }
     });
   }
@@ -135,9 +153,11 @@ export class ListaTareasComponent implements OnInit {
           document.getElementById('modalEdicionTarea')
         );
         modal.hide();
+        this.mostrarMensaje('Tarea editada con éxito', 'success');
       },
       error: (err) => {
         console.error('Error al editar tarea', err);
+        this.mostrarMensaje('Error al editar tarea', 'danger');
       }
     });
   }

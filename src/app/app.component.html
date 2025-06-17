@@ -1,21 +1,39 @@
-<!-- Barra de navegación superior con Bootstrap -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
   <div class="container">
     <!-- Enlace que funciona como logo y nombre de la app -->
     <a class="navbar-brand d-flex align-items-center" href="#">
-      <!-- Imagen del logo, ubicada en src/assets/SenProLogo.png -->
-      <!-- Ajusta width y height según el tamaño que desees -->
-     <img src="assets/lista.png" alt="Logo" width="40" height="40" class="d-inline-block align-text-top me-2">
-     <span class="fs-3">Gestión de Tareas</span>
+      <img src="assets/lista.png" alt="Logo" width="40" height="40" class="d-inline-block align-text-top me-2">
+      <span class="fs-3">Gestión de Tareas</span>
     </a>
+    <!-- Enlaces de navegación y nombre de usuario -->
+    <div class="d-flex align-items-center ms-auto">
+      <!-- Muestra el nombre del usuario si está autenticado -->
+      <span *ngIf="authService.estaAutenticado()" class="text-light me-3">
+        <i class="bi bi-person-circle"></i> {{ nombreUsuario() }}
+      </span>
+      <!-- Si NO está autenticado, muestra los enlaces de login y registro -->
+      <a *ngIf="!authService.estaAutenticado()" routerLink="/login" class="btn btn-outline-light btn-sm me-2">
+        Iniciar sesión
+      </a>
+      <a *ngIf="!authService.estaAutenticado()" routerLink="/registro" class="btn btn-outline-light btn-sm me-2">
+        Registrarse
+      </a>
+      <!-- Si está autenticado, muestra el botón de logout -->
+      <button
+        *ngIf="authService.estaAutenticado()"
+        (click)="logout()"
+        class="btn btn-outline-light btn-sm"
+      >
+        Cerrar sesión
+      </button>
+    </div>
   </div>
 </nav>
 
-<!-- Aquí se inserta el componente de la lista de tareas -->
-<app-lista-tareas></app-lista-tareas>
+<!-- Aquí Angular mostrará el componente de la ruta activa -->
+<router-outlet></router-outlet>
 
 <!-- Pie de página (footer) con estilos de Bootstrap -->
 <footer class="bg-light text-center text-muted py-3 mt-4 border-top">
-  <!-- {{ year }} muestra el año actual, definido en el componente TypeScript -->
-  © {{ year }} Gestor de Tareas. Hecho con Angular y Bootstrap.
+  © {{ year }} Gestor de Tareas. Hecho por Anyelo con Angular y Bootstrap.
 </footer>
